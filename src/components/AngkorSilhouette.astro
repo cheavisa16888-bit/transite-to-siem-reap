@@ -1,0 +1,39 @@
+---
+// A simple drawing of Angkor Wat's outline: the outer wall, the galleries,
+// and the five lotus-bud towers. Color it with the `fill` prop.
+interface Props {
+  fill?: string;
+  class?: string;
+}
+
+const { fill = 'currentColor', class: className } = Astro.props;
+
+// One lotus-bud tower, standing on the line y = 150.
+function tower(cx: number, w: number, h: number) {
+  const y = 150;
+  return [
+    `M${cx - w / 2} ${y}`,
+    `V${y - h * 0.3}`,
+    `H${cx - w * 0.42}`,
+    `V${y - h * 0.5}`,
+    `H${cx - w * 0.32}`,
+    `Q${cx - w * 0.32} ${y - h * 0.86} ${cx} ${y - h}`,
+    `Q${cx + w * 0.32} ${y - h * 0.86} ${cx + w * 0.32} ${y - h * 0.5}`,
+    `H${cx + w * 0.42}`,
+    `V${y - h * 0.3}`,
+    `H${cx + w / 2}`,
+    'Z',
+  ].join(' ');
+}
+
+const towers = [tower(300, 70, 128), tower(222, 52, 92), tower(378, 52, 92), tower(160, 40, 66), tower(440, 40, 66)];
+---
+
+<svg viewBox="0 0 600 170" class={className} aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+  <g fill={fill}>
+    {towers.map((d) => <path d={d} />)}
+    <rect x="120" y="118" width="360" height="34" />
+    <rect x="80" y="134" width="440" height="18" />
+    <rect x="20" y="150" width="560" height="20" />
+  </g>
+</svg>

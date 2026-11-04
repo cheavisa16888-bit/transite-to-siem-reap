@@ -1,0 +1,457 @@
+---
+// The Angkor Wat day plan, at /angkor. Each <section> below is one band of the
+// page. Animations: a sunrise in the hero, "curtain" reveals on scroll, a day
+// timeline whose sun moves as you scroll, flip cards, and a packing checklist.
+// Everything is still readable with motion turned off (prefers-reduced-motion).
+import Base from '../layouts/Base.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import AngkorSilhouette from '../components/AngkorSilhouette.astro';
+
+const facts = [
+  { value: '1100s', label: 'when it was built', labelKm: 'ពេលដែលវាត្រូវបានសាងសង់' },
+  { value: '5', label: 'lotus-bud towers', labelKm: 'កំពូលរាងផ្កាឈូក' },
+  { value: '1', label: 'temple on Cambodia’s flag', labelKm: 'ប្រាសាទនៅលើទង់ជាតិកម្ពុជា' },
+];
+
+const day = [
+  { time: '4:30 am', title: 'Leave your hotel', titleKm: 'ចេញពីសណ្ឋាគារ', text: 'Go by tuk-tuk. It is still dark, so bring a small light.', textKm: 'ទៅដោយតុកតុក។ នៅងងឹតនៅឡើយ ដូច្នេះយកពិលតូចមួយ។' },
+  { time: '5:00 am', title: 'Get your Angkor Pass', titleKm: 'យកសំបុត្រ Angkor Pass', text: 'Stop at the official ticket office on the way.', textKm: 'ឈប់នៅការិយាល័យលក់សំបុត្រផ្លូវការតាមផ្លូវ។' },
+  { time: '5:30 am', title: 'Sunrise at Angkor Wat', titleKm: 'ថ្ងៃរះនៅអង្គរវត្ត', text: 'Stand by the lotus pond and watch the towers turn gold.', textKm: 'ឈរក្បែរស្រះឈូក ហើយមើលកំពូលប្រាសាទប្រែជាពណ៌មាស។' },
+  { time: '7:00 am', title: 'Explore Angkor Wat', titleKm: 'ដើរលេងអង្គរវត្ត', text: 'See the long walls of stone carvings, then climb to the top level.', textKm: 'មើលជញ្ជាំងចម្លាក់ថ្មដ៏វែង រួចឡើងទៅជាន់ខាងលើ។' },
+  { time: '9:30 am', title: 'Breakfast break', titleKm: 'សម្រាកញ៉ាំអាហារពេលព្រឹក', text: 'Eat and drink near the temple. You woke up early!', textKm: 'ញ៉ាំ និងផឹកនៅក្បែរប្រាសាទ។ អ្នកក្រោកពីព្រលឹម!' },
+  { time: '10:30 am', title: 'Bayon', titleKm: 'ប្រាសាទបាយ័ន', text: 'Walk among the big smiling stone faces in Angkor Thom.', textKm: 'ដើរកណ្តាលមុខថ្មញញឹមធំៗ នៅអង្គរធំ។' },
+  { time: '12:30 pm', title: 'Lunch and rest', titleKm: 'អាហារថ្ងៃត្រង់ និងសម្រាក', text: 'This is the hottest time. Find shade and rest.', textKm: 'នេះជាពេលក្តៅបំផុត។ រកម្លប់ ហើយសម្រាក។' },
+  { time: '2:30 pm', title: 'Ta Prohm', titleKm: 'ប្រាសាទតាព្រហ្ម', text: 'See giant tree roots growing over the old walls.', textKm: 'មើលឫសឈើយក្សដុះគ្របលើជញ្ជាំងចាស់។' },
+  { time: '5:30 pm', title: 'Sunset', titleKm: 'ថ្ងៃលិច', text: 'Watch the sun go down from Pre Rup or Phnom Bakheng.', textKm: 'មើលថ្ងៃលិចពីប្រាសាទប្រែរូប ឬភ្នំបាខែង។' },
+];
+
+const temples = [
+  { icon: '🛕', name: 'Angkor Wat', nameKm: 'អង្គរវត្ត', time: '3 hours', timeKm: '៣ ម៉ោង', tip: 'The biggest temple. Look for the stone carvings on the long walls.', tipKm: 'ប្រាសាទធំបំផុត។ រកមើលចម្លាក់ថ្មនៅលើជញ្ជាំងវែង។' },
+  { icon: '🗿', name: 'Bayon', nameKm: 'បាយ័ន', time: '1.5 hours', timeKm: '១.៥ ម៉ោង', tip: 'Many big stone faces smile at you from every tower.', tipKm: 'មុខថ្មធំៗជាច្រើនញញឹមដាក់អ្នកពីគ្រប់កំពូល។' },
+  { icon: '🌳', name: 'Ta Prohm', nameKm: 'តាព្រហ្ម', time: '1 hour', timeKm: '១ ម៉ោង', tip: 'Giant trees grow over the walls. Come early for fewer people.', tipKm: 'ដើមឈើយក្សដុះលើជញ្ជាំង។ មកពីព្រឹកដើម្បីជៀសមនុស្សច្រើន។' },
+  { icon: '🌸', name: 'Banteay Srei', nameKm: 'បន្ទាយស្រី', time: '1 hour', timeKm: '១ ម៉ោង', tip: 'A small pink stone temple with very fine carvings. About 1 hour away by tuk-tuk.', tipKm: 'ប្រាសាទថ្មពណ៌ផ្កាឈូកតូចមួយ មានចម្លាក់ល្អិតណាស់។ ប្រហែល ១ ម៉ោងតាមតុកតុក។' },
+  { icon: '⛰️', name: 'Phnom Bakheng', nameKm: 'ភ្នំបាខែង', time: '1 hour', timeKm: '១ ម៉ោង', tip: 'A temple on a hill. Great for sunset, but go early.', tipKm: 'ប្រាសាទលើភ្នំ។ ល្អសម្រាប់មើលថ្ងៃលិច ប៉ុន្តែទៅឱ្យទាន់ពេល។' },
+  { icon: '🏛️', name: 'Preah Khan', nameKm: 'ព្រះខ័ន', time: '1 hour', timeKm: '១ ម៉ោង', tip: 'Long, quiet halls. A calm place with fewer visitors.', tipKm: 'សាលវែងៗ ស្ងប់ស្ងាត់។ កន្លែងស្ងប់ មានភ្ញៀវតិច។' },
+];
+
+const passes = [
+  { name: '1 day', nameKm: '១ ថ្ងៃ', text: 'Good for the plan on this page.', textKm: 'ល្អសម្រាប់ផែនការនៅលើទំព័រនេះ។' },
+  { name: '3 days', nameKm: '៣ ថ្ងៃ', text: 'Use it on any 3 days within 10 days.', textKm: 'ប្រើបានក្នុង ៣ ថ្ងៃណាមួយ ក្នុងរយៈពេល ១០ ថ្ងៃ។' },
+  { name: '7 days', nameKm: '៧ ថ្ងៃ', text: 'Use it on any 7 days within 1 month.', textKm: 'ប្រើបានក្នុង ៧ ថ្ងៃណាមួយ ក្នុងរយៈពេល ១ ខែ។' },
+];
+
+const packing = [
+  { id: 'water', text: 'Water (a lot!)', textKm: 'ទឹក (ច្រើន!)' },
+  { id: 'hat', text: 'Hat and sunscreen', textKm: 'មួក និងឡេការពារកម្តៅថ្ងៃ' },
+  { id: 'shoes', text: 'Comfortable shoes', textKm: 'ស្បែកជើងពាក់ស្រួល' },
+  { id: 'clothes', text: 'Clothes that cover shoulders and knees', textKm: 'សម្លៀកបំពាក់គ្របស្មា និងជង្គង់' },
+  { id: 'pass', text: 'Your Angkor Pass', textKm: 'សំបុត្រ Angkor Pass របស់អ្នក' },
+  { id: 'light', text: 'A small light for the early morning', textKm: 'ពិលតូចសម្រាប់ពេលព្រលឹម' },
+  { id: 'cash', text: 'Cash for food and the tuk-tuk', textKm: 'សាច់ប្រាក់សម្រាប់អាហារ និងតុកតុក' },
+  { id: 'phone', text: 'Phone with full battery', textKm: 'ទូរសព្ទដែលមានថ្មពេញ' },
+];
+
+const respect = [
+  { icon: '👕', text: 'Cover your shoulders and knees.', textKm: 'គ្របស្មា និងជង្គង់របស់អ្នក។' },
+  { icon: '✋', text: 'Don’t touch or climb on the carvings.', textKm: 'កុំប៉ះ ឬឡើងលើចម្លាក់។' },
+  { icon: '🤫', text: 'Speak quietly. It is a holy place.', textKm: 'និយាយតិចៗ។ វាជាទីសក្ការៈ។' },
+  { icon: '🗑️', text: 'Take your trash with you.', textKm: 'យកសំរាមរបស់អ្នកទៅជាមួយ។' },
+];
+---
+
+<Base title="Plan your day at Angkor Wat" description="A one-day plan for visiting Angkor Wat: sunrise, temples, what to bring, and how to show respect.">
+  <Header />
+
+  <main>
+    <!-- HERO: the sky turns from night to morning and the sun rises behind Angkor Wat -->
+    <section class="hero relative isolate flex min-h-[44rem] items-end overflow-hidden text-paper sm:min-h-[50rem]">
+      <div class="sky-night absolute inset-0 -z-30"></div>
+      <div class="sky-dawn absolute inset-0 -z-30"></div>
+      <div class="stars absolute inset-0 -z-30" aria-hidden="true"></div>
+      <div class="absolute inset-x-0 top-0 -z-10 h-2/3 bg-gradient-to-b from-ink/50 to-transparent" aria-hidden="true"></div>
+      <div class="sun absolute left-1/2 -z-20 size-40 -translate-x-1/2 rounded-full sm:size-56" aria-hidden="true"></div>
+      <div class="cloud cloud-a absolute -z-20" aria-hidden="true"></div>
+      <div class="cloud cloud-b absolute -z-20" aria-hidden="true"></div>
+      <svg class="bird bird-a absolute -z-10 w-8" viewBox="0 0 40 16" aria-hidden="true"><path d="M2 12 Q11 2 20 10 Q29 2 38 12" fill="none" stroke="#1c2321" stroke-width="2.5" stroke-linecap="round" /></svg>
+      <svg class="bird bird-b absolute -z-10 w-6" viewBox="0 0 40 16" aria-hidden="true"><path d="M2 12 Q11 2 20 10 Q29 2 38 12" fill="none" stroke="#1c2321" stroke-width="2.5" stroke-linecap="round" /></svg>
+
+      <!-- Temple, water, and its reflection -->
+      <div class="absolute inset-x-0 bottom-0 -z-10" aria-hidden="true">
+        <AngkorSilhouette fill="#121816" class="mx-auto block w-[130%] max-w-none -translate-x-[11.5%] sm:w-full sm:max-w-3xl sm:translate-x-0" />
+        <div class="water relative h-20 sm:h-28">
+          <AngkorSilhouette fill="#121816" class="reflection mx-auto block w-[130%] max-w-none -translate-x-[11.5%] sm:w-full sm:max-w-3xl sm:translate-x-0" />
+        </div>
+      </div>
+
+      <div class="hero-text relative mx-auto mb-auto w-full max-w-6xl px-4 pt-20 text-center sm:px-6 sm:pt-28">
+        <p class="text-sm font-semibold tracking-[0.2em] text-paper/80 uppercase">A one-day plan</p>
+        <h1 class="mt-4 font-display text-5xl leading-[1.02] font-extrabold tracking-tight text-balance drop-shadow-lg sm:text-7xl">
+          Your day at Angkor Wat
+        </h1>
+        <p lang="km" class="mt-3 text-2xl font-semibold drop-shadow sm:text-3xl">ថ្ងៃរបស់អ្នកនៅអង្គរវត្ត</p>
+        <p class="mx-auto mt-5 max-w-xl text-lg text-paper/90 drop-shadow">
+          From sunrise to sunset: where to go, what to bring, and how to show respect.
+          <span class="km" lang="km">ពីថ្ងៃរះដល់ថ្ងៃលិច៖ ទៅណា យកអ្វី និងរបៀបគោរព។</span>
+        </p>
+        <a href="#day" class="mt-8 inline-block rounded-full bg-sun px-7 py-3 font-semibold text-ink shadow-lg transition hover:bg-paper">
+          See the plan ↓ <span lang="km" class="font-khmer font-normal">មើលផែនការ</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- FACTS -->
+    <section class="border-b border-ink/10 bg-white">
+      <dl class="mx-auto grid max-w-6xl grid-cols-3 gap-4 px-4 py-10 sm:px-6">
+        {
+          facts.map((f, i) => (
+            <div data-reveal style={`--delay:${i * 120}ms`}>
+              <dt class="sr-only">{f.label}</dt>
+              <dd class="font-display text-3xl font-extrabold text-brand sm:text-4xl">{f.value}</dd>
+              <dd class="mt-1 text-sm text-muted">
+                {f.label}
+                <span class="km" lang="km">{f.labelKm}</span>
+              </dd>
+            </div>
+          ))
+        }
+      </dl>
+    </section>
+
+    <!-- DAY PLAN: a sky bar follows you; its sun moves from sunrise to sunset as you scroll -->
+    <section id="day" class="mx-auto max-w-3xl scroll-mt-20 px-4 py-20 sm:px-6 sm:py-28">
+      <div data-reveal>
+        <p class="font-semibold text-brand">The plan <span lang="km" class="font-khmer font-normal">· ផែនការ</span></p>
+        <h2 class="mt-2 font-display text-4xl font-extrabold tracking-tight sm:text-5xl">One day, sunrise to sunset.</h2>
+        <p class="km mt-3 text-xl font-semibold sm:text-2xl" lang="km">មួយថ្ងៃ ពីថ្ងៃរះដល់ថ្ងៃលិច។</p>
+      </div>
+
+      <div data-timeline class="relative mt-10">
+        <div class="day-sky sticky top-16 z-10 h-20 overflow-hidden rounded-2xl shadow-lg" aria-hidden="true">
+          <span class="day-sun absolute size-8 -translate-x-1/2 -translate-y-1/2 rounded-full bg-sun shadow-[0_0_30px] shadow-sun"></span>
+          <span data-clock class="absolute top-2 right-3 rounded-full bg-ink/70 px-3 py-1 font-display text-sm font-bold text-paper">4:30 am</span>
+          <AngkorSilhouette fill="#1c2321" class="absolute bottom-0 left-1/2 w-56 -translate-x-1/2 opacity-80" />
+        </div>
+
+        <ol class="relative mt-10 pl-10">
+          <span class="absolute top-2 bottom-2 left-[11px] w-1 rounded-full bg-ink/10" aria-hidden="true"></span>
+          <span class="line-fill absolute top-2 bottom-2 left-[11px] w-1 origin-top rounded-full bg-brand" aria-hidden="true"></span>
+          {
+            day.map((d) => (
+              <li data-step data-time={d.time} class="step relative pb-10 last:pb-0">
+                <span class="dot absolute top-1.5 -left-[37px] size-5 rounded-full border-4 border-paper bg-ink/20 transition" aria-hidden="true" />
+                <p class="font-display text-2xl font-extrabold text-brand">{d.time}</p>
+                <h3 class="mt-1 font-display text-xl font-bold">
+                  {d.title}
+                  <span class="km text-base" lang="km">{d.titleKm}</span>
+                </h3>
+                <p class="mt-1 text-muted">
+                  {d.text}
+                  <span class="km" lang="km">{d.textKm}</span>
+                </p>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+    </section>
+
+    <!-- TEMPLES: tap a card to flip it -->
+    <section id="temples" class="scroll-mt-20 bg-ink py-20 text-paper sm:py-28">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6">
+        <div data-reveal>
+          <p class="font-semibold text-sun">The temples <span lang="km" class="font-khmer font-normal">· ប្រាសាទ</span></p>
+          <h2 class="mt-2 font-display text-4xl font-extrabold tracking-tight sm:text-5xl">Tap a card to flip it.</h2>
+          <p class="km mt-3 text-xl font-semibold sm:text-2xl" lang="km">ចុចកាតដើម្បីបង្វិលវា។</p>
+        </div>
+        <ul data-reveal class="-mx-4 mt-10 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-4 sm:mx-0 sm:grid sm:grid-cols-2 sm:overflow-visible sm:px-0 lg:grid-cols-3">
+          {
+            temples.map((t) => (
+              <li class="w-[80%] shrink-0 snap-center sm:w-auto">
+                <button type="button" class="flip group block h-72 w-full text-left" aria-pressed="false" aria-label={`${t.name}: show tip`}>
+                  <span class="flip-inner relative block h-full w-full">
+                    <span class="flip-face absolute inset-0 flex flex-col justify-end rounded-3xl bg-gradient-to-br from-brand to-brand-dark p-6">
+                      <span class="absolute top-5 right-5 text-6xl transition group-hover:scale-110">{t.icon}</span>
+                      <span class="text-sm font-semibold text-paper/70">⏱️ {t.time} <span lang="km" class="font-khmer">· {t.timeKm}</span></span>
+                      <span class="mt-1 font-display text-3xl font-extrabold">{t.name}</span>
+                      <span lang="km" class="font-khmer text-lg text-paper/80">{t.nameKm}</span>
+                      <span class="mt-3 text-sm font-semibold text-sun">Tap to flip ↻ <span lang="km" class="font-khmer font-normal">ចុចដើម្បីបង្វិល</span></span>
+                    </span>
+                    <span class="flip-face flip-back absolute inset-0 flex flex-col justify-center rounded-3xl bg-sun p-6 text-ink">
+                      <span class="font-display text-xl font-bold">💡 {t.name}</span>
+                      <span class="mt-3 text-lg">{t.tip}</span>
+                      <span class="km mt-2 text-ink/70" lang="km">{t.tipKm}</span>
+                    </span>
+                  </span>
+                </button>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </section>
+
+    <!-- TICKETS -->
+    <section class="mx-auto max-w-6xl px-4 py-20 sm:px-6 sm:py-28">
+      <div data-reveal>
+        <p class="font-semibold text-brand">Tickets <span lang="km" class="font-khmer font-normal">· សំបុត្រ</span></p>
+        <h2 class="mt-2 font-display text-4xl font-extrabold tracking-tight sm:text-5xl">The Angkor Pass</h2>
+        <p class="km mt-3 text-xl font-semibold sm:text-2xl" lang="km">សំបុត្រ Angkor Pass</p>
+        <p class="mt-4 max-w-2xl text-muted">
+          Foreign visitors need a pass. Buy it only at the official ticket office or the official website, and keep it with you all day.
+          <span class="km" lang="km">ភ្ញៀវបរទេសត្រូវការសំបុត្រ។ ទិញវាតែនៅការិយាល័យលក់សំបុត្រផ្លូវការ ឬគេហទំព័រផ្លូវការប៉ុណ្ណោះ ហើយរក្សាវាជាមួយអ្នកពេញមួយថ្ងៃ។</span>
+        </p>
+      </div>
+      <ul class="mt-10 grid gap-4 sm:grid-cols-3">
+        {
+          passes.map((p, i) => (
+            <li class="ticket relative rounded-2xl border-2 border-dashed border-brand/40 bg-white p-6" data-reveal style={`--delay:${i * 120}ms`}>
+              <p class="font-display text-3xl font-extrabold text-brand">
+                {p.name} <span lang="km" class="font-khmer text-lg font-normal text-muted">· {p.nameKm}</span>
+              </p>
+              <p class="mt-2 text-muted">
+                {p.text}
+                <span class="km" lang="km">{p.textKm}</span>
+              </p>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+
+    <!-- PACKING CHECKLIST: ticks are remembered in this browser -->
+    <section id="pack" class="scroll-mt-20 bg-white">
+      <div class="mx-auto grid max-w-6xl gap-10 px-4 py-20 sm:px-6 sm:py-28 lg:grid-cols-[1fr_1.4fr]">
+        <div data-reveal>
+          <p class="font-semibold text-brand">What to bring <span lang="km" class="font-khmer font-normal">· អ្វីដែលត្រូវយក</span></p>
+          <h2 class="mt-2 font-display text-4xl font-extrabold tracking-tight sm:text-5xl">Pack your bag.</h2>
+          <p class="km mt-3 text-xl font-semibold sm:text-2xl" lang="km">រៀបចំកាបូបរបស់អ្នក។</p>
+          <p class="mt-6 font-display text-2xl font-bold">
+            <span data-packed>0</span> / {packing.length} <span class="text-base font-normal text-muted">packed · <span lang="km" class="font-khmer">បានរៀបចំ</span></span>
+          </p>
+          <div class="mt-3 h-3 overflow-hidden rounded-full bg-ink/10">
+            <div data-pack-bar class="h-full w-0 rounded-full bg-brand transition-all duration-500"></div>
+          </div>
+        </div>
+        <ul class="grid gap-3 sm:grid-cols-2">
+          {
+            packing.map((p, i) => (
+              <li data-reveal style={`--delay:${(i % 2) * 100}ms`}>
+                <label class="pack flex cursor-pointer items-center gap-4 rounded-2xl bg-paper p-4 transition hover:bg-sun/20">
+                  <input type="checkbox" data-pack={p.id} class="peer sr-only" />
+                  <span class="check grid size-8 shrink-0 place-items-center rounded-full border-2 border-brand text-paper transition peer-checked:bg-brand peer-focus-visible:ring-2 peer-focus-visible:ring-brand peer-focus-visible:ring-offset-2" aria-hidden="true">✓</span>
+                  <span class="transition peer-checked:text-muted peer-checked:line-through">
+                    {p.text}
+                    <span class="km" lang="km">{p.textKm}</span>
+                  </span>
+                </label>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </section>
+
+    <!-- RESPECT -->
+    <section class="mx-auto max-w-6xl px-4 py-20 sm:px-6 sm:py-28">
+      <div data-reveal class="text-center">
+        <p class="font-semibold text-brand">Show respect <span lang="km" class="font-khmer font-normal">· បង្ហាញការគោរព</span></p>
+        <h2 class="mt-2 font-display text-4xl font-extrabold tracking-tight sm:text-5xl">A holy place for Cambodia.</h2>
+        <p class="km mt-3 text-xl font-semibold sm:text-2xl" lang="km">ទីសក្ការៈបូជាសម្រាប់កម្ពុជា។</p>
+      </div>
+      <ul class="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {
+          respect.map((r, i) => (
+            <li class="rounded-2xl border border-ink/10 bg-white p-6 text-center" data-reveal style={`--delay:${i * 100}ms`}>
+              <span class="text-4xl">{r.icon}</span>
+              <p class="mt-3 font-semibold">
+                {r.text}
+                <span class="km font-normal text-muted" lang="km">{r.textKm}</span>
+              </p>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+
+    <!-- BACK TO THE TRAVEL GUIDE -->
+    <section class="px-4 pb-20 sm:px-6">
+      <div class="mx-auto max-w-6xl rounded-3xl bg-brand px-6 py-16 text-center text-paper sm:py-20" data-reveal>
+        <h2 class="font-display text-4xl font-extrabold tracking-tight text-balance sm:text-5xl">Not in Siem Reap yet? 🚌</h2>
+        <p class="km mt-3 text-xl font-semibold sm:text-2xl" lang="km">មិនទាន់នៅសៀមរាបទេ?</p>
+        <a href="/#ways" class="mt-8 inline-block rounded-full bg-paper px-8 py-4 font-semibold text-ink transition hover:bg-sun">
+          How to get there → <span lang="km" class="font-khmer font-normal">របៀបទៅដល់</span>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</Base>
+
+<style>
+  /* ---------- Hero sunrise ---------- */
+  .sky-night { background: linear-gradient(#0b1530, #22305a 60%, #3b3f6b); }
+  .sky-dawn {
+    background: linear-gradient(#3d6fb8 0%, #f7b36b 55%, #f6d58f 75%, #f3e2b3);
+    opacity: 0;
+    animation: dawn 7s ease-in-out 0.3s forwards;
+  }
+  .stars {
+    background-image:
+      radial-gradient(1.5px 1.5px at 12% 18%, #fff, transparent),
+      radial-gradient(1.5px 1.5px at 28% 8%, #fff, transparent),
+      radial-gradient(1px 1px at 44% 22%, #fff, transparent),
+      radial-gradient(1.5px 1.5px at 63% 12%, #fff, transparent),
+      radial-gradient(1px 1px at 78% 26%, #fff, transparent),
+      radial-gradient(1.5px 1.5px at 90% 9%, #fff, transparent),
+      radial-gradient(1px 1px at 6% 34%, #fff, transparent),
+      radial-gradient(1px 1px at 55% 35%, #fff, transparent);
+    animation: fade-out 5s ease-in 0.3s forwards;
+  }
+  .sun {
+    bottom: 14rem;
+    background: radial-gradient(circle, #fff6d6 0%, #ffd27a 45%, #f7a440 100%);
+    box-shadow: 0 0 80px 30px rgb(255 200 110 / 0.55);
+    transform: translate(-50%, 70%);
+    animation: rise 7s cubic-bezier(0.2, 0.7, 0.2, 1) 0.3s forwards;
+  }
+  .water { background: linear-gradient(#2b4a52, #1a2d33); }
+  .reflection { transform: scaleY(-1); opacity: 0.35; filter: blur(2px); mask-image: linear-gradient(transparent 0%, #000 100%); }
+  .cloud { height: 2.5rem; border-radius: 999px; background: rgb(255 255 255 / 0.55); filter: blur(6px); }
+  .cloud-a { top: 22%; left: -12rem; width: 12rem; animation: drift 38s linear infinite; }
+  .cloud-b { top: 34%; left: -8rem; width: 8rem; animation: drift 52s linear 6s infinite; }
+  .bird { left: -3rem; animation: fly 16s linear 2s infinite, flap 0.5s ease-in-out infinite alternate; }
+  .bird-a { top: 28%; }
+  .bird-b { top: 31%; animation-delay: 2.6s, 0.2s; }
+  .hero-text { animation: rise-text 1.4s cubic-bezier(0.2, 0.7, 0.2, 1) 0.2s both; }
+
+  @keyframes dawn { to { opacity: 1; } }
+  @keyframes fade-out { to { opacity: 0; } }
+  @keyframes rise { to { transform: translate(-50%, 0); } }
+  @keyframes drift { to { transform: translateX(calc(100vw + 24rem)); } }
+  @keyframes fly { to { transform: translateX(calc(100vw + 6rem)) translateY(-3rem); } }
+  @keyframes flap { to { scale: 1 0.4; } }
+  @keyframes rise-text { from { opacity: 0; transform: translateY(2rem); filter: blur(8px); } }
+
+  /* ---------- Curtain reveal on scroll ---------- */
+  [data-reveal] {
+    clip-path: inset(0 0 100% 0);
+    transform: translateY(1.5rem);
+    transition:
+      clip-path 0.9s cubic-bezier(0.7, 0, 0.2, 1) var(--delay, 0ms),
+      transform 0.9s cubic-bezier(0.7, 0, 0.2, 1) var(--delay, 0ms);
+  }
+  [data-reveal].is-in { clip-path: inset(0 0 0 0); transform: none; }
+
+  /* ---------- Day timeline ---------- */
+  [data-timeline] { --p: 0; --sx: 0%; --sy: 80%; --sky: hsl(30 75% 65%); }
+  .day-sky { background: linear-gradient(var(--sky), #f3e2b3); transition: background 0.3s; }
+  .day-sun { left: var(--sx); top: var(--sy); }
+  .line-fill { transform: scaleY(var(--p)); }
+  .step.is-done .dot { background: var(--color-brand); transform: scale(1.25); }
+
+  /* ---------- Flip cards ---------- */
+  .flip { perspective: 1000px; }
+  .flip-inner { transform-style: preserve-3d; transition: transform 0.8s cubic-bezier(0.3, 1.4, 0.5, 1); }
+  .flip[aria-pressed='true'] .flip-inner { transform: rotateY(180deg); }
+  .flip-face { backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+  .flip-back { transform: rotateY(180deg); }
+
+  /* ---------- Checklist pop ---------- */
+  .pack input:checked + .check { animation: pop 0.35s ease-out; }
+  @keyframes pop { 50% { transform: scale(1.3); } }
+
+  /* No motion for people who turn it off: show the finished sunrise, no reveals. */
+  @media (prefers-reduced-motion: reduce) {
+    .sky-dawn, .stars, .sun, .hero-text, .cloud, .bird { animation: none; }
+    .sky-dawn { opacity: 1; }
+    .stars { opacity: 0; }
+    .sun { transform: translate(-50%, 0); }
+    .bird, .cloud { display: none; }
+    [data-reveal] { clip-path: none; transform: none; transition: none; }
+    .flip-inner { transition: none; }
+  }
+</style>
+
+<script>
+  // Curtain reveal: open each [data-reveal] block when it scrolls into view.
+  const io = new IntersectionObserver(
+    (entries) => {
+      for (const e of entries) {
+        if (e.isIntersecting) {
+          e.target.classList.add('is-in');
+          io.unobserve(e.target);
+        }
+      }
+    },
+    { rootMargin: '0px 0px -10% 0px' },
+  );
+  for (const el of document.querySelectorAll('[data-reveal]')) io.observe(el);
+
+  // Day timeline: fill the line, light up the steps, and move the sun from
+  // sunrise (left) to sunset (right) as you scroll.
+  const timeline = document.querySelector<HTMLElement>('[data-timeline]')!;
+  const steps = [...timeline.querySelectorAll<HTMLElement>('[data-step]')];
+  const clock = timeline.querySelector('[data-clock]')!;
+  let ticking = false;
+
+  function updateTimeline() {
+    ticking = false;
+    const box = timeline.getBoundingClientRect();
+    const p = Math.min(1, Math.max(0, (innerHeight * 0.5 - box.top) / box.height));
+    // Sky color: orange at dawn, blue at noon, red at sunset.
+    const hue = p < 0.5 ? 30 + 170 * (p / 0.5) : 200 - 185 * ((p - 0.5) / 0.5);
+    timeline.style.setProperty('--p', String(p));
+    timeline.style.setProperty('--sx', `${6 + p * 88}%`);
+    timeline.style.setProperty('--sy', `${80 - Math.sin(Math.PI * p) * 55}%`);
+    timeline.style.setProperty('--sky', `hsl(${hue} 75% 65%)`);
+
+    let current = steps[0];
+    for (const step of steps) {
+      const done = step.getBoundingClientRect().top < innerHeight * 0.55;
+      step.classList.toggle('is-done', done);
+      if (done) current = step;
+    }
+    clock.textContent = current.dataset.time ?? '';
+  }
+  addEventListener(
+    'scroll',
+    () => {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(updateTimeline);
+      }
+    },
+    { passive: true },
+  );
+  updateTimeline();
+
+  // Flip cards.
+  for (const card of document.querySelectorAll<HTMLButtonElement>('.flip')) {
+    card.addEventListener('click', () => {
+      card.setAttribute('aria-pressed', String(card.getAttribute('aria-pressed') !== 'true'));
+    });
+  }
+
+  // Packing checklist, remembered in this browser (if the browser allows it).
+  const boxes = [...document.querySelectorAll<HTMLInputElement>('[data-pack]')];
+  const KEY = 'angkor-packing';
+  let saved: string[] = [];
+  try {
+    saved = JSON.parse(localStorage.getItem(KEY) ?? '[]');
+  } catch {}
+  function updatePacking() {
+    const done = boxes.filter((b) => b.checked);
+    document.querySelector('[data-packed]')!.textContent = String(done.length);
+    document.querySelector<HTMLElement>('[data-pack-bar]')!.style.width = `${(done.length / boxes.length) * 100}%`;
+    try {
+      localStorage.setItem(KEY, JSON.stringify(done.map((b) => b.dataset.pack)));
+    } catch {}
+  }
+  for (const box of boxes) {
+    box.checked = saved.includes(box.dataset.pack!);
+    box.addEventListener('change', updatePacking);
+  }
+  updatePacking();
+</script>

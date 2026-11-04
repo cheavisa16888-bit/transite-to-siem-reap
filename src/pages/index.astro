@@ -5,139 +5,183 @@
 import Base from '../layouts/Base.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import { getDecks } from '../lib/decks';
-
-const steps = [
-  {
-    icon: '🧰',
-    title: 'Choose a stack',
-    titleKm: 'ជ្រើសរើស stack',
-    text: 'Pick the technology the AI will use. AI can help you choose. This week, it’s chosen for you.',
-    textKm: 'ជ្រើសរើសបច្ចេកវិទ្យាដែល AI នឹងប្រើ។ AI អាចជួយអ្នកជ្រើសរើសបាន។ សម្រាប់វគ្គនេះ យើងបានជ្រើសរើសរួចហើយ។',
-  },
-  {
-    icon: '💬',
-    title: 'Prompt',
-    titleKm: 'ប្រាប់ AI',
-    text: 'Describe the website you want, in plain words. English or Khmer.',
-    textKm: 'ពិពណ៌នាគេហទំព័រដែលអ្នកចង់បាន ជាពាក្យសាមញ្ញ។ ភាសាអង់គ្លេស ឬភាសាខ្មែរក៏បាន។',
-  },
-  {
-    icon: '🔁',
-    title: 'Iterate',
-    titleKm: 'កែលម្អម្តងហើយម្តងទៀត',
-    text: 'Check the result and tell the AI what to improve. Repeat! This is the real skill.',
-    textKm: 'ពិនិត្យលទ្ធផល ហើយប្រាប់ AI ពីអ្វីដែលត្រូវកែ។ ធ្វើម្តងទៀត! នេះគឺជាជំនាញពិតប្រាកដ។',
-  },
-  {
-    icon: '🚀',
-    title: 'Ship it',
-    titleKm: 'ដាក់ឱ្យប្រើ',
-    text: 'Publish it to the internet, free, at a link you can share.',
-    textKm: 'ដាក់វានៅលើអ៊ីនធឺណិត ដោយឥតគិតថ្លៃ ជាមួយតំណភ្ជាប់ដែលអ្នកអាចចែករំលែកបាន។',
-  },
-];
+import { site } from '../site';
 
 const stats = [
-  { value: '0', label: 'lines of code to memorize', labelKm: 'បន្ទាត់កូដដែលត្រូវទន្ទេញ' },
-  { value: '1', label: 'live website each', labelKm: 'គេហទំព័រផ្ទាល់ខ្លួនម្នាក់មួយ' },
-  { value: '$0', label: 'to publish it', labelKm: 'ដើម្បីដាក់វាលើអ៊ីនធឺណិត' },
+  { value: '315 km', label: 'from Phnom Penh to Siem Reap', labelKm: 'ពីភ្នំពេញទៅសៀមរាប' },
+  { value: '6 hours', label: 'by bus', labelKm: 'តាមឡានក្រុង' },
+  { value: '45 min', label: 'by plane', labelKm: 'តាមយន្តហោះ' },
 ];
 
-const needs = [
+// Cost: '$' is cheapest, '$$$$' is most expensive.
+const ways = [
   {
-    title: 'An idea',
-    titleKm: 'គំនិតមួយ',
-    text: 'A business, a project, a club — anything you would want a website for.',
-    textKm: 'អាជីវកម្ម គម្រោង ក្លឹប — អ្វីក៏បានដែលអ្នកចង់មានគេហទំព័រ។',
+    icon: '🚌',
+    name: 'Bus',
+    nameKm: 'ឡានក្រុង',
+    time: '6–7 hours',
+    timeKm: '៦–៧ ម៉ោង',
+    cost: '$',
+    good: 'Cheap. Many buses every day.',
+    goodKm: 'ថោក។ មានឡានក្រុងច្រើនរៀងរាល់ថ្ងៃ។',
+    bad: 'Slow.',
+    badKm: 'យឺត។',
   },
   {
-    title: 'A computer',
-    titleKm: 'កុំព្យូទ័រមួយ',
-    text: 'Mac or Windows. You will set it up yourself, with the AI as your guide.',
-    textKm: 'Mac ឬ Windows។ អ្នកនឹងរៀបចំវាដោយខ្លួនឯង ដោយមាន AI ជាអ្នកណែនាំ។',
+    icon: '🌙',
+    name: 'Night bus',
+    nameKm: 'ឡានក្រុងពេលយប់',
+    time: 'About 7 hours',
+    timeKm: 'ប្រហែល ៧ ម៉ោង',
+    cost: '$',
+    good: 'Sleep on the bus and save a hotel night.',
+    goodKm: 'គេងលើឡាន ហើយសន្សំថ្លៃសណ្ឋាគារមួយយប់។',
+    bad: 'Some people find it hard to sleep.',
+    badKm: 'មនុស្សខ្លះពិបាកគេង។',
   },
   {
-    title: 'A GitHub account',
-    titleKm: 'គណនី GitHub',
-    text: 'Free. This is where your website’s files are kept safe. We make it together on Day 1.',
-    textKm: 'ឥតគិតថ្លៃ។ ជាកន្លែងរក្សាទុកឯកសារគេហទំព័ររបស់អ្នកដោយសុវត្ថិភាព។ យើងបង្កើតវាជាមួយគ្នានៅថ្ងៃទី ១។',
+    icon: '🚐',
+    name: 'Minivan',
+    nameKm: 'ឡានតូច (មីនីវ៉ាន)',
+    time: '5–6 hours',
+    timeKm: '៥–៦ ម៉ោង',
+    cost: '$$',
+    good: 'Faster than the bus.',
+    goodKm: 'លឿនជាងឡានក្រុង។',
+    bad: 'Small seats. It can be crowded.',
+    badKm: 'កៅអីតូច។ អាចចង្អៀត។',
   },
   {
-    title: 'A Cloudflare account',
-    titleKm: 'គណនី Cloudflare',
-    text: 'Free. This puts your website on the internet.',
-    textKm: 'ឥតគិតថ្លៃ។ វាដាក់គេហទំព័ររបស់អ្នកនៅលើអ៊ីនធឺណិត។',
+    icon: '🚕',
+    name: 'Taxi',
+    nameKm: 'តាក់ស៊ី',
+    time: 'About 5 hours',
+    timeKm: 'ប្រហែល ៥ ម៉ោង',
+    cost: '$$$',
+    good: 'Leave when you want. Stop where you want.',
+    goodKm: 'ចេញពេលណាក៏បាន។ ឈប់កន្លែងណាក៏បាន។',
+    bad: 'Expensive alone. Share it with friends.',
+    badKm: 'ថ្លៃបើទៅម្នាក់ឯង។ ចែកគ្នាជាមួយមិត្តភក្តិ។',
   },
+  {
+    icon: '✈️',
+    name: 'Plane',
+    nameKm: 'យន្តហោះ',
+    time: '45 min flight',
+    timeKm: 'ហោះ ៤៥ នាទី',
+    cost: '$$$$',
+    good: 'The fastest way.',
+    goodKm: 'មធ្យោបាយលឿនបំផុត។',
+    bad: 'Most expensive. The new airport is about 1 hour from town.',
+    badKm: 'ថ្លៃបំផុត។ អាកាសយានដ្ឋានថ្មីនៅឆ្ងាយពីទីក្រុងប្រហែល ១ ម៉ោង។',
+  },
+  {
+    icon: '🚤',
+    name: 'Boat',
+    nameKm: 'ទូក',
+    time: '5–6 hours',
+    timeKm: '៥–៦ ម៉ោង',
+    cost: '$$',
+    good: 'Beautiful views of the Tonle Sap.',
+    goodKm: 'ទេសភាពស្អាតនៃទន្លេសាប។',
+    bad: 'Only some months, when the water is high.',
+    badKm: 'មានតែខ្លះខែ ពេលទឹកឡើងខ្ពស់។',
+  },
+];
+
+const tips = [
+  {
+    icon: '🎟️',
+    title: 'Book early',
+    titleKm: 'កក់មុន',
+    text: 'On holidays like Khmer New Year and Pchum Ben, buy your ticket a few days before.',
+    textKm: 'នៅថ្ងៃបុណ្យដូចជាចូលឆ្នាំខ្មែរ និងភ្ជុំបិណ្ឌ សូមទិញសំបុត្រមុនពីរបីថ្ងៃ។',
+  },
+  {
+    icon: '💧',
+    title: 'Bring water and snacks',
+    titleKm: 'យកទឹក និងអាហារសម្រន់',
+    text: 'The bus stops for food, but it’s good to have your own.',
+    textKm: 'ឡានក្រុងឈប់សម្រាប់ញ៉ាំ ប៉ុន្តែល្អជាងបើមានរបស់ខ្លួនឯង។',
+  },
+  {
+    icon: '🧥',
+    title: 'Bring a jacket',
+    titleKm: 'យកអាវរងា',
+    text: 'The air-con on buses can be very cold.',
+    textKm: 'ម៉ាស៊ីនត្រជាក់លើឡានក្រុងអាចត្រជាក់ខ្លាំង។',
+  },
+  {
+    icon: '🛺',
+    title: 'Tuk-tuk at the end',
+    titleKm: 'តុកតុកនៅទីបញ្ចប់',
+    text: 'Agree on the price before you get in.',
+    textKm: 'ព្រមព្រៀងតម្លៃមុនពេលឡើងជិះ។',
+  },
+];
+
+const sights = [
+  {
+    icon: '🌅',
+    title: 'Angkor Wat',
+    titleKm: 'អង្គរវត្ត',
+    text: 'Come early to watch the sunrise.',
+    textKm: 'មកពីព្រលឹមដើម្បីមើលថ្ងៃរះ។',
+  },
+  {
+    icon: '🗿',
+    title: 'Bayon',
+    titleKm: 'ប្រាសាទបាយ័ន',
+    text: 'The temple with many big stone faces.',
+    textKm: 'ប្រាសាទដែលមានមុខថ្មធំៗជាច្រើន។',
+  },
+  {
+    icon: '🌳',
+    title: 'Ta Prohm',
+    titleKm: 'ប្រាសាទតាព្រហ្ម',
+    text: 'Giant tree roots growing over the temple.',
+    textKm: 'ឫសឈើយក្សដុះគ្របលើប្រាសាទ។',
+  },
+  {
+    icon: '🏮',
+    title: 'Night market',
+    titleKm: 'ផ្សាររាត្រី',
+    text: 'Food, shops, and music in the evening.',
+    textKm: 'អាហារ ហាង និងតន្ត្រីនៅពេលល្ងាច។',
+  },
+];
+
+const route = [
+  { place: 'Phnom Penh', placeKm: 'ភ្នំពេញ', icon: '🏙️' },
+  { place: 'Kampong Thom', placeKm: 'កំពង់ធំ', icon: '🍜' },
+  { place: 'Siem Reap', placeKm: 'សៀមរាប', icon: '🛕' },
 ];
 
 const faqs = [
   {
-    q: 'Do I need to know how to code?',
-    qKm: 'តើខ្ញុំត្រូវចេះសរសេរកូដទេ?',
-    a: 'No. You will see some code, and you will learn what it is, but the AI writes it. Your job is to know what you want and to say it clearly.',
-    aKm: 'ទេ។ អ្នកនឹងឃើញកូដខ្លះ ហើយនឹងរៀនថាវាជាអ្វី ប៉ុន្តែ AI ជាអ្នកសរសេរវា។ ការងាររបស់អ្នក គឺដឹងថាអ្នកចង់បានអ្វី ហើយនិយាយវាឱ្យបានច្បាស់។',
+    q: 'Which way is best?',
+    qKm: 'តើមធ្យោបាយណាល្អបំផុត?',
+    a: 'Bus to save money. Taxi for families or groups. Plane if you are in a hurry.',
+    aKm: 'ឡានក្រុងបើចង់សន្សំលុយ។ តាក់ស៊ីសម្រាប់គ្រួសារ ឬក្រុម។ យន្តហោះបើអ្នកប្រញាប់។',
   },
   {
-    q: 'Can my website be in Khmer?',
-    qKm: 'តើគេហទំព័ររបស់ខ្ញុំអាចជាភាសាខ្មែរបានទេ?',
-    a: 'Yes. You can ask the AI to write in Khmer, or to make the site in both languages. Always have a Khmer speaker check the words — you know the language better than the AI does.',
-    aKm: 'បាន។ អ្នកអាចប្រាប់ AI ឱ្យសរសេរជាភាសាខ្មែរ ឬធ្វើគេហទំព័រជាពីរភាសា។ តែងតែឱ្យអ្នកចេះភាសាខ្មែរពិនិត្យពាក្យពេចន៍ — អ្នកស្គាល់ភាសានេះច្បាស់ជាង AI។',
+    q: 'Where do the buses leave from?',
+    qKm: 'តើឡានក្រុងចេញពីណា?',
+    a: 'Each bus company has its own station in Phnom Penh. Check your ticket.',
+    aKm: 'ក្រុមហ៊ុនឡានក្រុងនីមួយៗមានស្ថានីយ៍ផ្ទាល់ខ្លួននៅភ្នំពេញ។ សូមពិនិត្យសំបុត្ររបស់អ្នក។',
   },
   {
-    q: 'Do I keep my website after the workshop?',
-    qKm: 'តើខ្ញុំនៅតែមានគេហទំព័ររបស់ខ្ញុំក្រោយវគ្គសិក្សាទេ?',
-    a: 'Yes. Everything is in your own GitHub and Cloudflare accounts. It is yours, and it stays online.',
-    aKm: 'បាទ/ចាស។ អ្វីៗទាំងអស់នៅក្នុងគណនី GitHub និង Cloudflare ផ្ទាល់ខ្លួនរបស់អ្នក។ វាជារបស់អ្នក ហើយវានៅតែដំណើរការលើអ៊ីនធឺណិត។',
+    q: 'When is the best time to go?',
+    qKm: 'តើពេលណាល្អបំផុតដើម្បីទៅ?',
+    a: 'November to February. It is cooler, and there is little rain.',
+    aKm: 'ខែវិច្ឆិកា ដល់ខែកុម្ភៈ។ អាកាសធាតុត្រជាក់ជាង ហើយមានភ្លៀងតិច។',
   },
   {
-    q: 'What if the AI makes a mistake?',
-    qKm: 'ចុះបើ AI ធ្វើខុស?',
-    a: 'It will! Tell it what is wrong, the same way you would tell a person. If things get really messy, you can always go back to an earlier version.',
-    aKm: 'វានឹងធ្វើខុសម្តងម្កាល! ប្រាប់វាថាអ្វីខុស ដូចដែលអ្នកប្រាប់មនុស្សម្នាក់។ ប្រសិនបើអ្វីៗរញ៉េរញ៉ៃខ្លាំង អ្នកតែងតែអាចត្រឡប់ទៅកំណែមុនវិញបាន។',
+    q: 'Do I need a ticket for the temples?',
+    qKm: 'តើខ្ញុំត្រូវការសំបុត្រដើម្បីចូលប្រាសាទទេ?',
+    a: 'Foreign visitors need an Angkor Pass. Buy it at the official ticket office.',
+    aKm: 'ភ្ញៀវបរទេសត្រូវការសំបុត្រ Angkor Pass។ ទិញវានៅការិយាល័យលក់សំបុត្រផ្លូវការ។',
   },
-];
-
-const decks = getDecks();
-
-// The "Get started" prompt that students copy into Claude. Each block is one
-// paragraph; the copy buttons join them with blank lines.
-const starterPrompt = [
-  {
-    en: 'I’m a student in Cambodia, learning to use Claude Code to build software. My instructor gave me this message to start with.',
-    km: 'ខ្ញុំជាសិស្សនៅកម្ពុជា កំពុងរៀនប្រើ Claude Code ដើម្បីបង្កើតកម្មវិធី។ គ្រូរបស់ខ្ញុំបានផ្តល់សារនេះឱ្យខ្ញុំ សម្រាប់ចាប់ផ្តើម។',
-  },
-  {
-    en: 'Please don’t assume I know anything about programming, or that I speak English well. Use short, simple English, and add a Khmer translation under your messages. If I write in Khmer, reply in Khmer.',
-    km: 'សូមកុំសន្មតថាខ្ញុំចេះអ្វីអំពីការសរសេរកម្មវិធី ឬថាខ្ញុំចេះភាសាអង់គ្លេសច្បាស់។ សូមប្រើភាសាអង់គ្លេសខ្លីៗ និងសាមញ្ញ ហើយបន្ថែមការបកប្រែជាភាសាខ្មែរនៅក្រោមសាររបស់អ្នក។ ប្រសិនបើខ្ញុំសរសេរជាភាសាខ្មែរ សូមឆ្លើយជាភាសាខ្មែរ។',
-  },
-  {
-    en: 'My instructor made the GitHub template repo teamdandelion/vibe-code-cambodia to help me get started. Please help me, one step at a time:',
-    km: 'គ្រូរបស់ខ្ញុំបានបង្កើត GitHub template repo teamdandelion/vibe-code-cambodia ដើម្បីជួយខ្ញុំចាប់ផ្តើម។ សូមជួយខ្ញុំ ម្តងមួយជំហាន៖',
-  },
-  {
-    en: '1. Set up my computer for software development. It may be a Mac or Windows. (The repo has guides in docs/mac-setup.md and docs/windows-setup.md.)\n2. Make a GitHub account if I don’t have one, and connect it to this computer.\n3. Make my own repo from the template, and get the website running on my computer.\n4. Help me turn it into my own website.',
-    km: '១. រៀបចំកុំព្យូទ័ររបស់ខ្ញុំសម្រាប់ការអភិវឌ្ឍកម្មវិធី។ វាអាចជា Mac ឬ Windows។ (repo មានការណែនាំនៅក្នុង docs/mac-setup.md និង docs/windows-setup.md។)\n២. បង្កើតគណនី GitHub ប្រសិនបើខ្ញុំមិនទាន់មាន ហើយភ្ជាប់វាទៅកុំព្យូទ័រនេះ។\n៣. បង្កើត repo ផ្ទាល់ខ្លួនរបស់ខ្ញុំពី template ហើយធ្វើឱ្យគេហទំព័រដំណើរការនៅលើកុំព្យូទ័ររបស់ខ្ញុំ។\n៤. ជួយខ្ញុំប្តូរវាឱ្យក្លាយជាគេហទំព័រផ្ទាល់ខ្លួនរបស់ខ្ញុំ។',
-  },
-  {
-    en: 'Ask me questions to find out what I’d like to build, and work with me. Explain each step before you do it, and wait for me when I need to do something myself.',
-    km: 'សួរខ្ញុំសំណួរ ដើម្បីដឹងថាខ្ញុំចង់បង្កើតអ្វី ហើយធ្វើការជាមួយខ្ញុំ។ ពន្យល់ជំហាននីមួយៗ មុនពេលអ្នកធ្វើវា ហើយរង់ចាំខ្ញុំ នៅពេលខ្ញុំត្រូវធ្វើអ្វីមួយដោយខ្លួនឯង។',
-  },
-];
-const promptEn = starterPrompt.map((b) => b.en).join('\n\n');
-const promptKm = starterPrompt.map((b) => b.km).join('\n\n');
-
-const startSteps = [
-  {
-    text: 'Install the Claude app and sign in. On Windows, install Git first.',
-    km: 'ដំឡើងកម្មវិធី Claude ហើយចូលគណនី។ នៅលើ Windows សូមដំឡើង Git ជាមុនសិន។',
-    link: { href: '/setup', label: 'How?', labelKm: 'ធ្វើដូចម្តេច?' },
-  },
-  {
-    text: 'Open the Code tab.',
-    km: 'បើកផ្ទាំង Code។',
-  },
-  { text: 'Copy this message, paste it in, and press Enter.', km: 'ចម្លងសារនេះ បិទភ្ជាប់វា ហើយចុច Enter។' },
 ];
 ---
 
@@ -153,104 +197,57 @@ const startSteps = [
       <div class="relative mx-auto grid max-w-6xl items-center gap-12 px-4 py-16 sm:px-6 sm:py-24 lg:grid-cols-2">
         <div>
           <p class="inline-flex items-center gap-2 rounded-full border border-ink/10 bg-white/70 px-3 py-1 text-sm font-medium">
-            <span class="size-2 rounded-full bg-leaf"></span>
-            A vibe coding workshop at New Hope Cambodia
+            <span class="size-2 rounded-full bg-brand"></span>
+            A simple travel guide
           </p>
           <h1 class="mt-6 font-display text-5xl leading-[1.02] font-extrabold tracking-tight text-balance sm:text-6xl lg:text-7xl">
-            Build a real website by <span class="text-brand">talking</span> to AI.
+            From Phnom Penh to <span class="text-brand">Siem Reap</span>.
           </h1>
-          <p lang="km" class="mt-4 text-xl text-ink/70">បង្កើតគេហទំព័រជាមួយ AI</p>
+          <p lang="km" class="mt-4 text-xl text-ink/70">ពីភ្នំពេញ ទៅសៀមរាប។</p>
           <p class="mt-6 max-w-xl text-lg text-muted">
-            No coding experience needed. Describe the website you want, watch the AI build it, and publish it to the internet by the end of the week.
-            <span class="km" lang="km">មិនចាំបាច់មានបទពិសោធន៍សរសេរកូដទេ។ ពិពណ៌នាគេហទំព័រដែលអ្នកចង់បាន មើល AI បង្កើតវា ហើយដាក់វានៅលើអ៊ីនធឺណិតត្រឹមចុងសប្តាហ៍។</span>
+            Bus, minivan, taxi, plane, or boat? Compare them all, and get ready for your trip to Angkor.
+            <span class="km" lang="km">ឡានក្រុង ឡានតូច តាក់ស៊ី យន្តហោះ ឬទូក? ប្រៀបធៀបទាំងអស់ ហើយត្រៀមខ្លួនសម្រាប់ដំណើររបស់អ្នកទៅអង្គរ។</span>
           </p>
           <div class="mt-8 flex flex-wrap gap-3">
-            <a href="#start" class="rounded-full bg-brand px-6 py-3 font-semibold text-paper shadow-lg shadow-brand/25 transition hover:bg-brand-dark">
-              Get started ↓ <span lang="km" class="font-khmer font-normal opacity-80">ចាប់ផ្តើម</span>
+            <a href="#ways" class="rounded-full bg-brand px-6 py-3 font-semibold text-paper shadow-lg shadow-brand/25 transition hover:bg-brand-dark">
+              Compare the ways ↓ <span lang="km" class="font-khmer font-normal opacity-80">ប្រៀបធៀប</span>
             </a>
-            <a href="/lesson" class="rounded-full border border-ink/15 bg-white px-6 py-3 font-semibold transition hover:border-ink/40">
-              See the lessons → <span lang="km" class="font-khmer font-normal opacity-60">មេរៀន</span>
+            <a href="#see" class="rounded-full border border-ink/15 bg-white px-6 py-3 font-semibold transition hover:border-ink/40">
+              What to see → <span lang="km" class="font-khmer font-normal opacity-60">អ្វីដែលត្រូវមើល</span>
             </a>
           </div>
         </div>
 
-        <!-- Illustration: a prompt on the left becomes a website on the right -->
-        <div class="relative" aria-hidden="true">
-          <div class="rounded-2xl bg-ink p-5 font-mono text-sm text-paper shadow-2xl">
-            <div class="mb-4 flex gap-1.5">
-              <span class="size-3 rounded-full bg-brand"></span>
-              <span class="size-3 rounded-full bg-sun"></span>
-              <span class="size-3 rounded-full bg-leaf"></span>
+        <!-- Illustration: a ticket for the trip -->
+        <div class="relative mx-auto w-full max-w-md" aria-hidden="true">
+          <div class="rotate-[-2deg] rounded-3xl bg-white p-6 pb-12 shadow-2xl">
+            <div class="flex items-center justify-between text-sm font-semibold text-muted">
+              <span>TICKET · សំបុត្រ</span>
+              <span>🚌</span>
             </div>
-            <p class="text-sun">&gt; Make a website for my family's bakery in Phnom Penh.</p>
-            <p class="mt-1 text-sun">&nbsp;&nbsp;Warm colors, our menu, and a map.</p>
-            <p class="mt-3 text-paper/60">✓ Created homepage</p>
-            <p class="text-paper/60">✓ Added menu with 6 items</p>
-            <p class="text-paper/60">✓ Added map and opening hours</p>
-            <p class="mt-3 animate-pulse">▍</p>
-          </div>
-          <div class="relative -mt-6 mr-2 ml-auto w-60 rotate-[3deg] rounded-xl border border-ink/10 bg-white p-4 shadow-xl sm:w-72">
-            <div class="h-20 rounded-lg bg-gradient-to-br from-sun to-brand"></div>
-            <p class="mt-3 font-display font-bold">Sokha's Bakery</p>
-            <p class="text-xs text-muted">Fresh bread every morning since 1998</p>
-            <div class="mt-3 grid grid-cols-3 gap-2">
-              <div class="h-8 rounded bg-paper"></div>
-              <div class="h-8 rounded bg-paper"></div>
-              <div class="h-8 rounded bg-paper"></div>
+            <div class="mt-6 flex items-center justify-between gap-3">
+              <div>
+                <p class="font-display text-2xl leading-tight font-extrabold">Phnom<br />Penh</p>
+                <p lang="km" class="font-khmer text-sm text-muted">ភ្នំពេញ</p>
+              </div>
+              <div class="flex flex-1 items-center gap-2 text-brand">
+                <span class="h-0.5 flex-1 border-t-2 border-dashed border-brand/50"></span>
+                <span class="text-2xl">➜</span>
+              </div>
+              <div class="text-right">
+                <p class="font-display text-2xl leading-tight font-extrabold">Siem<br />Reap</p>
+                <p lang="km" class="font-khmer text-sm text-muted">សៀមរាប</p>
+              </div>
+            </div>
+            <div class="mt-6 grid grid-cols-3 gap-3 border-t-2 border-dashed border-ink/10 pt-4 text-sm">
+              <div><p class="text-muted">Distance</p><p class="font-bold">315 km</p></div>
+              <div><p class="text-muted">Road</p><p class="font-bold">NR 6</p></div>
+              <div><p class="text-muted">Arrive</p><p class="font-bold">🛕 Angkor</p></div>
             </div>
           </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- GET STARTED: the message students paste into Claude -->
-    <section id="start" class="scroll-mt-20 border-t border-ink/10 bg-white">
-      <div class="mx-auto grid max-w-6xl gap-10 px-4 py-16 sm:px-6 sm:py-24 lg:grid-cols-[1fr_1.5fr]">
-        <div>
-          <p class="font-semibold text-brand">Get started <span lang="km" class="font-khmer font-normal">· ចាប់ផ្តើម</span></p>
-          <h2 class="mt-2 font-display text-4xl font-extrabold tracking-tight text-balance sm:text-5xl">Send this message to Claude.</h2>
-          <p class="km mt-3 text-xl font-semibold sm:text-2xl" lang="km">ផ្ញើសារនេះទៅ Claude។</p>
-          <p class="mt-4 text-lg text-muted">
-            Claude will help you set up your computer and build your website, one step at a time.
-            <span class="km" lang="km">Claude នឹងជួយអ្នករៀបចំកុំព្យូទ័រ និងបង្កើតគេហទំព័ររបស់អ្នក ម្តងមួយជំហាន។</span>
+          <p class="absolute -right-2 -bottom-5 rotate-[4deg] rounded-full bg-sun px-5 py-2 font-display font-bold shadow-xl">
+            Have a good trip! <span lang="km" class="font-khmer font-normal">ដំណើរល្អ!</span>
           </p>
-          <ol class="mt-8 space-y-4">
-            {
-              startSteps.map((step, i) => (
-                <li class="flex gap-4">
-                  <span class="grid size-8 shrink-0 place-items-center rounded-full bg-brand font-display font-bold text-paper">{i + 1}</span>
-                  <p class="pt-1">
-                    {step.text}{' '}
-                    {step.link && (
-                      <a href={step.link.href} class="font-semibold text-brand underline underline-offset-2">
-                        {step.link.label} <span lang="km" class="font-khmer font-normal">{step.link.labelKm}</span>
-                      </a>
-                    )}
-                    <span class="km text-muted" lang="km">{step.km}</span>
-                  </p>
-                </li>
-              ))
-            }
-          </ol>
-        </div>
-
-        <div class="relative rounded-2xl border-l-4 border-sun bg-paper p-5 pt-16 shadow-xl shadow-ink/5 sm:p-8 sm:pt-16">
-          <div class="absolute top-4 right-4 left-4 flex flex-wrap justify-end gap-2 sm:left-auto">
-            <button type="button" class="prompt-copy rounded-full bg-brand px-4 py-1.5 text-sm font-semibold text-paper transition hover:bg-brand-dark" data-copy={promptEn}>
-              Copy message
-            </button>
-            <button type="button" lang="km" class="prompt-copy rounded-full border border-brand px-4 py-1.5 font-khmer text-sm font-semibold text-brand transition hover:bg-brand hover:text-paper" data-copy={promptKm}>
-              ចម្លងជាភាសាខ្មែរ
-            </button>
-          </div>
-          {
-            starterPrompt.map((block) => (
-              <p class="mb-4 whitespace-pre-line last:mb-0">
-                {block.en}
-                <span class="km text-muted whitespace-pre-line" lang="km">{block.km}</span>
-              </p>
-            ))
-          }
         </div>
       </div>
     </section>
@@ -273,114 +270,112 @@ const startSteps = [
       </dl>
     </section>
 
-    <!-- HOW IT WORKS -->
-    <section id="how" class="mx-auto max-w-6xl scroll-mt-20 px-4 py-20 sm:px-6 sm:py-28">
-      <p class="font-semibold text-brand">How it works <span lang="km" class="font-khmer font-normal">· របៀបដំណើរការ</span></p>
-      <h2 class="mt-2 max-w-2xl font-display text-4xl font-extrabold tracking-tight text-balance sm:text-5xl">
-        Four steps from idea to live website.
-      </h2>
-      <p class="km mt-3 text-xl font-semibold sm:text-2xl" lang="km">បួនជំហាន ពីគំនិតមួយ ទៅជាគេហទំព័រដែលដំណើរការពិតប្រាកដ។</p>
-      <ol class="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    <!-- WAYS TO GO -->
+    <section id="ways" class="mx-auto max-w-6xl scroll-mt-20 px-4 py-20 sm:px-6 sm:py-28">
+      <p class="font-semibold text-brand">Ways to go <span lang="km" class="font-khmer font-normal">· មធ្យោបាយធ្វើដំណើរ</span></p>
+      <h2 class="mt-2 font-display text-4xl font-extrabold tracking-tight sm:text-5xl">Six ways to get there.</h2>
+      <p class="km mt-3 text-xl font-semibold sm:text-2xl" lang="km">មធ្យោបាយប្រាំមួយដើម្បីទៅដល់។</p>
+      <p class="mt-4 text-muted">
+        $ = cheap, $$$$ = expensive.
+        <span class="km" lang="km">$ = ថោក, $$$$ = ថ្លៃ។</span>
+      </p>
+      <ul class="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {
-          steps.map((s, i) => (
-            <li class="rounded-2xl border border-ink/10 bg-white p-6">
-              <div class="flex items-center justify-between">
-                <span class="text-3xl">{s.icon}</span>
-                <span class="font-display text-sm font-bold text-ink/30">0{i + 1}</span>
+          ways.map((w) => (
+            <li class="flex flex-col rounded-2xl border border-ink/10 bg-white p-6 transition hover:-translate-y-1 hover:border-brand hover:shadow-xl">
+              <div class="flex items-start justify-between">
+                <span class="text-4xl">{w.icon}</span>
+                <span class="rounded-full bg-sun/30 px-3 py-1 font-display font-bold">{w.cost}</span>
               </div>
-              <h3 class="mt-4 font-display text-xl font-bold">
-                {s.title}
-                <span class="km text-base" lang="km">{s.titleKm}</span>
+              <h3 class="mt-4 font-display text-2xl font-bold">
+                {w.name}
+                <span class="km text-lg" lang="km">{w.nameKm}</span>
               </h3>
-              <p class="mt-2 text-muted">
-                {s.text}
-                <span class="km" lang="km">{s.textKm}</span>
+              <p class="mt-2 font-semibold text-brand">
+                ⏱️ {w.time} <span lang="km" class="font-khmer font-normal">· {w.timeKm}</span>
+              </p>
+              <p class="mt-4 text-sm">
+                <span class="font-bold text-brand">👍 </span>{w.good}
+                <span class="km text-muted" lang="km">{w.goodKm}</span>
+              </p>
+              <p class="mt-2 text-sm">
+                <span class="font-bold text-leaf">👎 </span>{w.bad}
+                <span class="km text-muted" lang="km">{w.badKm}</span>
               </p>
             </li>
           ))
         }
-      </ol>
+      </ul>
     </section>
 
-    <!-- BIG STATEMENT -->
+    <!-- THE ROUTE -->
     <section class="bg-ink text-paper">
-      <div class="mx-auto max-w-4xl px-4 py-20 text-center sm:px-6 sm:py-28">
+      <div class="mx-auto max-w-4xl px-4 py-20 text-center sm:px-6 sm:py-24">
         <p class="font-display text-3xl leading-tight font-bold text-balance sm:text-5xl">
-          AI turns out to be <span class="text-sun">very good at writing code.</span> So the most useful skill now is knowing what to ask for.
+          Most people take <span class="text-sun">National Road 6</span>, through Kampong Thom.
         </p>
         <p lang="km" class="km mt-6 text-xl sm:text-2xl">
-          AI ពិតជាពូកែសរសេរកូដណាស់។ ដូច្នេះ ជំនាញដែលមានប្រយោជន៍បំផុតនាពេលនេះ គឺការដឹងថាត្រូវស្នើសុំអ្វី។
+          មនុស្សភាគច្រើនធ្វើដំណើរតាមផ្លូវជាតិលេខ ៦ កាត់តាមខេត្តកំពង់ធំ។
         </p>
+        <ol class="mt-12 flex items-start justify-between gap-2">
+          {
+            route.map((r, i) => (
+              <li class="relative flex flex-1 flex-col items-center">
+                {i > 0 && <span class="absolute top-7 right-1/2 w-full border-t-2 border-dashed border-paper/30" />}
+                <span class="relative grid size-14 place-items-center rounded-full bg-paper text-2xl">{r.icon}</span>
+                <span class="mt-3 font-display font-bold">{r.place}</span>
+                <span lang="km" class="font-khmer text-sm text-paper/70">{r.placeKm}</span>
+              </li>
+            ))
+          }
+        </ol>
       </div>
     </section>
 
-    <!-- LESSONS -->
-    <section id="lessons" class="mx-auto max-w-6xl scroll-mt-20 px-4 py-20 sm:px-6 sm:py-28">
-      <p class="font-semibold text-brand">Lessons <span lang="km" class="font-khmer font-normal">· មេរៀន</span></p>
-      <h2 class="mt-2 font-display text-4xl font-extrabold tracking-tight sm:text-5xl">Start here.</h2>
-      <p class="km mt-3 text-xl font-semibold sm:text-2xl" lang="km">ចាប់ផ្តើមនៅទីនេះ។</p>
-      <div class="mt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+    <!-- TIPS -->
+    <section id="tips" class="mx-auto max-w-6xl scroll-mt-20 px-4 py-20 sm:px-6 sm:py-28">
+      <p class="font-semibold text-brand">Tips <span lang="km" class="font-khmer font-normal">· គន្លឹះ</span></p>
+      <h2 class="mt-2 font-display text-4xl font-extrabold tracking-tight sm:text-5xl">Before you go.</h2>
+      <p class="km mt-3 text-xl font-semibold sm:text-2xl" lang="km">មុនពេលអ្នកចេញដំណើរ។</p>
+      <ul class="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {
-          decks.map((deck) => (
-            <a
-              href={`/lesson/${deck.slug}`}
-              class="group flex flex-col rounded-2xl border border-ink/10 bg-white p-6 transition hover:-translate-y-1 hover:border-brand hover:shadow-xl"
-            >
-              <span class="font-display text-sm font-bold tracking-wide text-brand uppercase">{deck.eyebrow}</span>
-              <span class="mt-2 font-display text-2xl font-bold">
-                {deck.title.replace(/^[^—]+—\s*/, '')}
-                {deck.titleKm && <span class="km text-lg" lang="km">{deck.titleKm.replace(/^[^—]+—\s*/, '')}</span>}
-              </span>
-              <span class="mt-2 flex-1 text-muted">
-                {deck.subtitle}
-                {deck.subtitleKm && <span class="km" lang="km">{deck.subtitleKm}</span>}
-              </span>
-              <span class="mt-6 font-semibold text-brand">Open slides <span class="inline-block transition group-hover:translate-x-1">→</span> <span lang="km" class="font-khmer font-normal">បើកស្លាយ</span></span>
-            </a>
+          tips.map((t) => (
+            <li class="rounded-2xl border border-ink/10 bg-white p-6">
+              <span class="text-3xl">{t.icon}</span>
+              <h3 class="mt-4 font-display text-xl font-bold">
+                {t.title}
+                <span class="km text-base" lang="km">{t.titleKm}</span>
+              </h3>
+              <p class="mt-2 text-muted">
+                {t.text}
+                <span class="km" lang="km">{t.textKm}</span>
+              </p>
+            </li>
           ))
         }
-        <a
-          href="/setup"
-          class="group flex flex-col rounded-2xl border border-ink/10 bg-white p-6 transition hover:-translate-y-1 hover:border-brand hover:shadow-xl"
-        >
-          <span class="font-display text-sm font-bold tracking-wide text-brand uppercase">Guide</span>
-          <span class="mt-2 font-display text-2xl font-bold">
-            Set up your computer
-            <span class="km text-lg" lang="km">រៀបចំកុំព្យូទ័ររបស់អ្នក</span>
-          </span>
-          <span class="mt-2 flex-1 text-muted">
-            Install the Claude app, then let the AI set up the rest of your computer.
-            <span class="km" lang="km">ដំឡើងកម្មវិធី Claude បន្ទាប់មកឱ្យ AI រៀបចំផ្នែកផ្សេងទៀតនៃកុំព្យូទ័ររបស់អ្នក។</span>
-          </span>
-          <span class="mt-6 font-semibold text-brand">Open the guide <span class="inline-block transition group-hover:translate-x-1">→</span> <span lang="km" class="font-khmer font-normal">បើកការណែនាំ</span></span>
-        </a>
-      </div>
+      </ul>
     </section>
 
-    <!-- WHAT YOU NEED -->
-    <section class="bg-white">
+    <!-- WHAT TO SEE -->
+    <section id="see" class="scroll-mt-20 bg-white">
       <div class="mx-auto grid max-w-6xl gap-12 px-4 py-20 sm:px-6 sm:py-28 lg:grid-cols-[1fr_1.4fr]">
         <div>
-          <p class="font-semibold text-brand">Before you start <span lang="km" class="font-khmer font-normal">· មុនពេលចាប់ផ្តើម</span></p>
-          <h2 class="mt-2 font-display text-4xl font-extrabold tracking-tight sm:text-5xl">What you need</h2>
-          <p class="km mt-3 text-xl font-semibold sm:text-2xl" lang="km">អ្វីដែលអ្នកត្រូវការ</p>
-          <p class="mt-4 text-lg text-muted">
-            That's the whole list. Everything else, the AI will help you install.
-            <span class="km" lang="km">នោះហើយជាបញ្ជីទាំងមូល។ អ្វីៗផ្សេងទៀត AI នឹងជួយអ្នកដំឡើង។</span>
-          </p>
+          <p class="font-semibold text-brand">When you arrive <span lang="km" class="font-khmer font-normal">· ពេលអ្នកមកដល់</span></p>
+          <h2 class="mt-2 font-display text-4xl font-extrabold tracking-tight sm:text-5xl">What to see in Siem Reap</h2>
+          <p class="km mt-3 text-xl font-semibold sm:text-2xl" lang="km">អ្វីដែលត្រូវមើលនៅសៀមរាប</p>
         </div>
         <ul class="grid gap-4 sm:grid-cols-2">
           {
-            needs.map((n) => (
+            sights.map((s) => (
               <li class="rounded-2xl bg-paper p-6">
-                <span class="grid size-8 place-items-center rounded-full bg-leaf text-sm font-bold text-paper">✓</span>
-                <h3 class="mt-4 font-display text-lg font-bold">
-                  {n.title}
-                  <span class="km text-base" lang="km">{n.titleKm}</span>
+                <span class="text-3xl">{s.icon}</span>
+                <h3 class="mt-3 font-display text-lg font-bold">
+                  {s.title}
+                  <span class="km text-base" lang="km">{s.titleKm}</span>
                 </h3>
                 <p class="mt-1 text-muted">
-                  {n.text}
-                  <span class="km" lang="km">{n.textKm}</span>
+                  {s.text}
+                  <span class="km" lang="km">{s.textKm}</span>
                 </p>
               </li>
             ))
@@ -417,10 +412,10 @@ const startSteps = [
     <!-- CALL TO ACTION -->
     <section class="px-4 pb-20 sm:px-6">
       <div class="mx-auto max-w-6xl rounded-3xl bg-brand px-6 py-16 text-center text-paper sm:py-20">
-        <h2 class="font-display text-4xl font-extrabold tracking-tight text-balance sm:text-5xl">Ready? Let's build something.</h2>
-        <p class="km mt-3 text-xl font-semibold sm:text-2xl" lang="km">រួចរាល់ហើយឬនៅ? តោះបង្កើតអ្វីមួយ។</p>
-        <a href="/lesson/day-1" class="mt-8 inline-block rounded-full bg-paper px-8 py-4 font-semibold text-ink transition hover:bg-sun">
-          Start with Day 1 → <span lang="km" class="font-khmer font-normal">ចាប់ផ្តើមថ្ងៃទី ១</span>
+        <h2 class="font-display text-4xl font-extrabold tracking-tight text-balance sm:text-5xl">Have a good trip! 🛕</h2>
+        <p class="km mt-3 text-xl font-semibold sm:text-2xl" lang="km">សូមឱ្យដំណើរកម្សាន្តរបស់អ្នករីករាយ!</p>
+        <a href={`mailto:${site.contactEmail}`} class="mt-8 inline-block rounded-full bg-paper px-8 py-4 font-semibold text-ink transition hover:bg-sun">
+          Ask me a question → <span lang="km" class="font-khmer font-normal">សួរខ្ញុំ</span>
         </a>
       </div>
     </section>
@@ -428,26 +423,3 @@ const startSteps = [
 
   <Footer />
 </Base>
-
-<script>
-  // "Copy message" buttons on the Get started prompt.
-  for (const button of document.querySelectorAll<HTMLButtonElement>('.prompt-copy')) {
-    const label = button.textContent;
-    button.addEventListener('click', async () => {
-      const text = button.dataset.copy ?? '';
-      try {
-        await navigator.clipboard.writeText(text);
-      } catch {
-        // Older browsers: copy through a hidden text box instead.
-        const box = document.createElement('textarea');
-        box.value = text;
-        document.body.append(box);
-        box.select();
-        document.execCommand('copy');
-        box.remove();
-      }
-      button.textContent = button.lang === 'km' ? 'បានចម្លង ✓' : 'Copied ✓';
-      setTimeout(() => (button.textContent = label), 2000);
-    });
-  }
-</script>
